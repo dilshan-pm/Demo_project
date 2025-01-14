@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ImageBackground, Text, StyleSheet, TextInput,TouchableOpacity } from 'react-native';
+import { View, ImageBackground, Platform, Text, StyleSheet, TextInput,TouchableOpacity } from 'react-native';
 
 function OtpPage({navigation}) {
     return (
@@ -18,10 +18,11 @@ function OtpPage({navigation}) {
 
         <TouchableOpacity 
         style={styles.Button}
-        onPress={() => navigation.goBack()}>
+        onPress={() => navigation.replace('Login')}>
             <Text style={styles.backButton}>Go Back</Text>
             </TouchableOpacity>          
-        <TouchableOpacity style={styles.verifyButton}>
+        <TouchableOpacity style={styles.verifyButton}
+        onPress={() => navigation.replace('Home')}>
             <Text style={styles.verifyText}>Verify</Text>
             </TouchableOpacity>
         </View>
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
       ButtonContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
-        padding: 20,
+        padding: 25,
       },
 
     backButton: {
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
         color: '#444',
       },
       Button: {
-        width: '40%',
+
         height: 45,
         borderRadius: 5,
         borderColor: '#ddd',
@@ -78,18 +79,18 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         justifyContent: 'center',
         alignItems: 'center',
-        top: 5,
+        
         right: 3,
-        opacity: "0"
+        width: Platform.OS === 'ios'? '50%' : '250%',
       },
       verifyButton: {
-        width: '40%',
+        width: Platform.OS === 'ios'? '50%' : '250%',
         height: 45,
         backgroundColor: '#333',
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 5,
-        top: 5,
+        
         left: 3
     },
       verifyText: {

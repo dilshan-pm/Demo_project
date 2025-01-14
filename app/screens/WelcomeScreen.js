@@ -23,7 +23,7 @@ function WelcomeScreen({navigation}) {
                 />
             <TouchableOpacity 
             style={styles.Button}
-            onPress={() => navigation.navigate('OTP')}
+            onPress={() => navigation.replace('OTP')}
             >
                     <Text style={styles.signInText}>Sign in</Text>
                   </TouchableOpacity>
