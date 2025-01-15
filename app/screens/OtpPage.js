@@ -1,7 +1,37 @@
-import React from 'react';
-import { View, ImageBackground, Platform, Text, StyleSheet, TextInput,TouchableOpacity } from 'react-native';
+import React, {useState} from 'react';
+import { View, Platform, Text, StyleSheet, TextInput,TouchableOpacity, Alert } from 'react-native';
+import axios from 'axios';
 
-function OtpPage({navigation}) {
+const OtpPage = ({ navigation }) => {
+  const [otp, setOtp] = useState('');
+  
+  const BASE_URL =
+    Platform.OS === 'android' ? 'http://10.0.2.2:3000' 
+      : Platform.OS === 'ios' ? 'http://localhost:3000' 
+      : 'http://192.168.1.40:3000';
+
+  const handleVerify = async () => {
+    console.log('Verify button clicked'); 
+    console.log('Entered OTP:', otp);   
+      try {
+          const response = await axios.post(`${BASE_URL}/verify-otp`, { otp });
+
+          if (response.status === 200) {
+            if (Platform.OS === 'web') {
+              window.alert('Success: OTP Verified Successfully');
+            } else {
+              Alert.alert('Success', 'OTP Verified Successfully');
+            }
+            navigation.replace('Home');
+          }
+        } catch (error) {
+          if (Platform.OS === 'web') {
+            window.alert('Error: Invalid OTP');
+          } else {
+            Alert.alert('Error','Invalid OTP');
+          }
+        }
+      };
     return (
         <View style={styles.container}>
           <Text style={styles.heading}>Verify Phone</Text>
@@ -13,6 +43,10 @@ function OtpPage({navigation}) {
             placeholder="Enter the OTP"
             keyboardType="numeric"
             maxLength={6}
+            value={otp}
+            onChangeText={(value) => {
+              setOtp(value);
+            }}
           />
         <View style={styles.ButtonContainer}>
 
@@ -22,7 +56,7 @@ function OtpPage({navigation}) {
             <Text style={styles.backButton}>Go Back</Text>
             </TouchableOpacity>          
         <TouchableOpacity style={styles.verifyButton}
-        onPress={() => navigation.replace('Home')}>
+        onPress={handleVerify}>
             <Text style={styles.verifyText}>Verify</Text>
             </TouchableOpacity>
         </View>
@@ -81,10 +115,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         
         right: 3,
-        width: Platform.OS === 'ios'? '50%' : '250%',
+        width: Platform.OS === 'ios'? '50%' : Platform.OS === 'android'?'50%': '250%',
       },
       verifyButton: {
-        width: Platform.OS === 'ios'? '50%' : '250%',
+        width: Platform.OS === 'ios'? '50%' : Platform.OS === 'android'?'50%': '250%',
         height: 45,
         backgroundColor: '#333',
         justifyContent: 'center',
