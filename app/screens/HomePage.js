@@ -1,23 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList } from 'react-native';
+import axios from 'axios';
 
 function HomePage({ navigation }) {
     const [isLoading, setIsLoading] = useState(true);
+    const [subjects, setSubjects] = useState([]);
 
     useEffect(() => {
-        
-        const timer = setTimeout(() => {
-            setIsLoading(false);
-        }, 1250);
-
-        return () => clearTimeout(timer);
-    },
-);
+        axios.get('http://192.168.1.40:3000/subjects') 
+            .then(response => {
+                setSubjects(response.data);
+                setIsLoading(false); 
+            })
+            .catch(error => {
+                console.error("Error fetching subjects:", error);
+                setIsLoading(false); 
+            });
+    }, []); 
 
     if (isLoading) {
         return (
             <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#000000"/>
+                <ActivityIndicator size="large" color="#000000" />
                 <Text style={styles.loadingText}>Please Wait ..</Text>
             </View>
         );
@@ -25,7 +29,16 @@ function HomePage({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>Welcome to the HomePage</Text>
+            <Text style={styles.header}>Tenth Standard Subjects</Text>
+            <FlatList
+                data={subjects}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => (
+                    <Text style={styles.item}>
+                        {item.id}. {item.subject}
+                </Text>
+                )}
+            />
         </View>
     );
 }
@@ -35,6 +48,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: '#f9f9f9',
     },
     loadingText: {
         fontSize: 14,
@@ -45,10 +59,17 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: '#fff',
+        paddingTop: 50,
     },
-    text: {
-        fontSize: 20,
+    header: {
+        fontSize: 24,
         fontWeight: 'bold',
+        marginBottom: 20,
+    },
+    item: {
+        fontSize: 18,
+        marginVertical: 5,
     },
 });
 

@@ -5,16 +5,15 @@ import axios from 'axios';
 const OtpPage = ({ navigation }) => {
   const [otp, setOtp] = useState('');
   
-  const BASE_URL =
-    Platform.OS === 'android' ? 'http://10.0.2.2:3000' 
-      : Platform.OS === 'ios' ? 'http://localhost:3000' 
-      : 'http://192.168.1.40:3000';
+  const BASE_URL = 'http://192.168.1.40:3000';
 
   const handleVerify = async () => {
     console.log('Verify button clicked'); 
     console.log('Entered OTP:', otp);   
       try {
           const response = await axios.post(`${BASE_URL}/verify-otp`, { otp });
+
+          console.log(response);
 
           if (response.status === 200) {
             if (Platform.OS === 'web') {
@@ -32,7 +31,7 @@ const OtpPage = ({ navigation }) => {
           }
         }
       };
-    return (
+  return (
         <View style={styles.container}>
           <Text style={styles.heading}>Verify Phone</Text>
           <Text style={styles.subheading}>
