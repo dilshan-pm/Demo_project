@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, FlatList } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList, Alert, Platform } from 'react-native';
 import axios from 'axios';
 
-function HomePage({ navigation }) {
+
+function HomePage() {
     const [isLoading, setIsLoading] = useState(true);
     const [subjects, setSubjects] = useState([]);
 
     useEffect(() => {
+
         axios.get('http://192.168.1.40:3000/subjects') 
             .then(response => {
                 setSubjects(response.data);
@@ -36,7 +38,7 @@ function HomePage({ navigation }) {
                 renderItem={({ item }) => (
                     <Text style={styles.item}>
                         {item.id}. {item.subject}
-                </Text>
+                    </Text>
                 )}
             />
         </View>

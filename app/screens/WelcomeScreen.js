@@ -3,21 +3,23 @@ import { StyleSheet, Text, TextInput, Platform, SafeAreaView, Image, TouchableOp
 
 
 function WelcomeScreen({ navigation }) {
-  const [mobileNumber, setMobileNumber] = useState('');
-  const handleSignIn = () => {
-      if (mobileNumber.length === 10) {
-          navigation.replace('OTP');
-      } else {
-          if (Platform.OS === 'web') {
-              alert('Invalid Mobile Number. Please enter a valid 10-digit mobile number.');
-          } else {
-              Alert.alert('Invalid Mobile Number', 'Please enter a valid 10-digit mobile number.');
-          }
-      }
-  };
+    const [mobileNumber, setMobileNumber] = useState('');
+  
+    const handleSignIn = () => {
+        if (mobileNumber.length === 10) {
+            navigation.replace('OTP', { mobileNumber });
+        } else {
+            if (Platform.OS === 'web') {
+                alert('Invalid Mobile Number. Please enter a valid 10-digit mobile number.');
+            } else {
+                Alert.alert('Invalid Mobile Number', 'Please enter a valid 10-digit mobile number.');
+            }
+        }
+    };
+
   
 
-    return (
+return (
         <SafeAreaView style={styles.container}>
             <Image 
                 source={require('../assets/mobile.png')} 
@@ -44,8 +46,8 @@ function WelcomeScreen({ navigation }) {
             </TouchableOpacity>
         </SafeAreaView>
     );
-}
 
+}
 const styles = StyleSheet.create({
   logo: {
       width: 50,
