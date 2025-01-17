@@ -3,16 +3,29 @@ import { View, Text, ActivityIndicator, Alert, StyleSheet, Platform } from 'reac
 import axios from 'axios';
 
 const AuthPage = ({ navigation, route }) => {
-    const BASE_URL = 'http://192.168.1.40:3000';     
+    const BASE_URL = 'http://192.168.1.40:5000';     
     const otp = route.params?.otp; 
 
     const handleVerify = async () => {
         console.log('Verify button clicked');
         console.log('Entered OTP:', otp); 
            
+        if (!otp) {
+            if (Platform.OS === 'web') {
+                window.alert('Error: OTP is required');
+            } else {
+                Alert.alert('Error', 'OTP is required');
+            }
+            return;
+        }
 
         try {
-            const response = await axios.post(`${BASE_URL}/verify-otp`, { otp }); 
+            const response = await axios.post(`${BASE_URL}/verify-otp`, { otp: otp.toString() },
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }}
+        ); 
             if (response.status === 200) {
                 if (Platform.OS === 'web') {
                     window.alert('Success: OTP Verified Successfully');
@@ -41,7 +54,7 @@ const AuthPage = ({ navigation, route }) => {
 
         const timer = setTimeout(() => {
             handleVerify();
-        }, 2000); 
+        }, 1500); 
 
         return () => clearTimeout(timer);  
     }, [otp]); 

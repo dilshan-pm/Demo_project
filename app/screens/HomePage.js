@@ -5,6 +5,7 @@ import axios from 'axios';
 
 function HomePage() {
     const [isLoading, setIsLoading] = useState(true);
+
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
@@ -28,7 +29,6 @@ function HomePage() {
             </View>
         );
     }
-
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Tenth Standard Subjects</Text>
