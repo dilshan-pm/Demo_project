@@ -5,13 +5,13 @@ import axios from 'axios';
 
 function HomePage() {
     const [isLoading, setIsLoading] = useState(true);
-    const [subjects, setSubjects] = useState([]);
+    const [users, setUsers] = useState([]);
 
     useEffect(() => {
 
-        axios.get('http://192.168.1.40:3000/subjects') 
+        axios.get('http://192.168.1.40:5000/users') 
             .then(response => {
-                setSubjects(response.data);
+                setUsers(response.data);
                 setIsLoading(false); 
             })
             .catch(error => {
@@ -33,7 +33,7 @@ function HomePage() {
         <View style={styles.container}>
             <Text style={styles.header}>Tenth Standard Subjects</Text>
             <FlatList
-                data={subjects}
+                data={users}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => (
                     <Text style={styles.item}>
