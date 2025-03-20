@@ -1,78 +1,101 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, FlatList, Alert, Platform } from 'react-native';
-import axios from 'axios';
+import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Camera } from 'expo-camera';
+import { useNavigation } from '@react-navigation/native';
 
-
-function HomePage() {
-    const [isLoading, setIsLoading] = useState(true);
-
-    const [users, setUsers] = useState([]);
+export default function HomeScreen() {
+    const navigation = useNavigation();
+    const [hasPermission, setHasPermission] = useState(null);
 
     useEffect(() => {
+        (async () => {
+            const { status } = await Camera.requestCameraPermissionsAsync();
+            setHasPermission(status === 'granted');
+        })();
+    }, []);
 
-        axios.get('http://192.168.1.40:5000/users') 
-            .then(response => {
-                setUsers(response.data);
-                setIsLoading(false); 
-            })
-            .catch(error => {
-                console.error("Error fetching subjects:", error);
-                setIsLoading(false); 
-            });
-    }, []); 
+    const openScanner = () => {
+        if (hasPermission === false) {
+            Alert.alert("Camera Permission Denied", "Please allow camera access in settings.");
+            return;
+        }
+        navigation.navigate('Scanner'); 
+    };
 
-    if (isLoading) {
-        return (
-            <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#000000" />
-                <Text style={styles.loadingText}>Please Wait ..</Text>
-            </View>
-        );
-    }
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>Tenth Standard Subjects</Text>
-            <FlatList
-                data={users}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => (
-                    <Text style={styles.item}>
-                        {item.id}. {item.subject}
-                    </Text>
-                )}
-            />
+            <Text style={styles.title}>CashScan</Text>
+            <Text style={styles.subtitle}>Detect counterfeit notes instantly</Text>
+
+            {/* Scan Button */}
+            <TouchableOpacity style={styles.scanButton} onPress={openScanner}>
+                <Ionicons name="camera-outline" size={30} color="black" />
+                <Text style={styles.buttonText}>Scan a Note</Text>
+            </TouchableOpacity>
+
+            {/* History Button */}
+            <TouchableOpacity style={styles.historyButton} onPress={() => navigation.navigate('History')}>
+                <Ionicons name="time-outline" size={24} color="white" />
+                <Text style={styles.historyText}>View History</Text>
+            </TouchableOpacity>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    loadingContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#f9f9f9',
-    },
-    loadingText: {
-        fontSize: 14,
-        top: 10,
-        color: '#555',
-    },
     container: {
         flex: 1,
-        justifyContent: 'center',
+        backgroundColor: '#121212',
         alignItems: 'center',
-        backgroundColor: '#fff',
-        paddingTop: 50,
+        justifyContent: 'center',
+        padding: 20,
     },
-    header: {
-        fontSize: 24,
+    title: {
+        fontSize: 40,
         fontWeight: 'bold',
-        marginBottom: 20,
+        color: '#FFFFFF',
+        fontFamily: 'Courier New',
+        textTransform: 'uppercase',
+        marginBottom: 10,
     },
-    item: {
+    subtitle: {
         fontSize: 18,
-        marginVertical: 5,
+        color: '#AAAAAA',
+        textAlign: 'center',
+        marginBottom: 40,
+    },
+    scanButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#36B761',
+        paddingVertical: 15,
+        paddingHorizontal: 30,
+        borderRadius: 10,
+        marginBottom: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
+    },
+    buttonText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#000000',
+        marginLeft: 10,
+    },
+    historyButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#333333',
+        paddingVertical: 15,
+        paddingHorizontal: 30,
+        borderRadius: 10,
+    },
+    historyText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#FFFFFF',
+        marginLeft: 10,
     },
 });
-
-export default HomePage;

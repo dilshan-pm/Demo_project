@@ -1,15 +1,13 @@
 import React, { useEffect } from 'react';
 import { View, Text, ActivityIndicator, Alert, StyleSheet, Platform } from 'react-native';
-import axios from 'axios';
 
 const AuthPage = ({ navigation, route }) => {
-    const BASE_URL = 'http://192.168.1.40:5000';     
-    const otp = route.params?.otp; 
+    const otp = route.params?.otp;
 
-    const handleVerify = async () => {
+    const handleVerify = () => {
         console.log('Verify button clicked');
-        console.log('Entered OTP:', otp); 
-           
+        console.log('Entered OTP:', otp);
+
         if (!otp) {
             if (Platform.OS === 'web') {
                 window.alert('Error: OTP is required');
@@ -19,30 +17,20 @@ const AuthPage = ({ navigation, route }) => {
             return;
         }
 
-        try {
-            const response = await axios.post(`${BASE_URL}/verify-otp`, { otp: otp.toString() },
-            {
-                headers: {
-                    'Content-Type': 'application/json'
-                }}
-        ); 
-            if (response.status === 200) {
-                if (Platform.OS === 'web') {
-                    window.alert('Success: OTP Verified Successfully');
-                } else {
-                    Alert.alert('Success', 'OTP Verified Successfully');
-                }
-                navigation.replace('Home'); 
+        if (otp.toString() === '123456') {
+            if (Platform.OS === 'web') {
+                window.alert('Success: OTP Verified Successfully');
+            } else {
+                Alert.alert('Success', 'OTP Verified Successfully');
             }
-        } catch (error) {
-            console.error('Error during OTP verification:', error);
-
+            navigation.replace('Home');
+        } else {
             if (Platform.OS === 'web') {
                 window.alert('Error: Invalid OTP');
             } else {
                 Alert.alert('Error', 'Invalid OTP');
             }
-            navigation.replace('OTP', { error: 'Invalid OTP' }); 
+            navigation.replace('OTP', { error: 'Invalid OTP' });
         }
     };
 
@@ -54,10 +42,10 @@ const AuthPage = ({ navigation, route }) => {
 
         const timer = setTimeout(() => {
             handleVerify();
-        }, 1500); 
+        }, 1500);
 
-        return () => clearTimeout(timer);  
-    }, [otp]); 
+        return () => clearTimeout(timer);
+    }, [otp]);
 
     return (
         <View style={styles.loadingContainer}>
