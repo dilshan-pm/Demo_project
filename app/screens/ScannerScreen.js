@@ -1,46 +1,59 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function ScannerScreen({ navigation }) {
-    const [hasPermission, setHasPermission] = useState(null);
+    const [hasCameraPermission, setHasCameraPermission] = useState(null);
     const [image, setImage] = useState(null);
 
     useEffect(() => {
         (async () => {
             const { status } = await ImagePicker.requestCameraPermissionsAsync();
-            setHasPermission(status === 'granted');
+            setHasCameraPermission(status === 'granted');
         })();
     }, []);
 
-    // Open the native camera app
+    // Open the camera
     const openCamera = async () => {
-        if (hasPermission !== 'granted') {
-            alert("Camera access is required to take pictures.");
+        if (hasCameraPermission === null) {
+            Alert.alert("Permission Error", "Camera permission is not determined yet.");
             return;
         }
-        let result = await ImagePicker.launchCameraAsync({
-            mediaTypes: ImagePicker.MediaType.Images,
-            allowsEditing: true,
-            quality: 1,
-        });
+        if (!hasCameraPermission) {
+            Alert.alert("Permission Denied", "Please enable camera access from settings.");
+            return;
+        }
 
-        if (!result.canceled) {
-            setImage(result.assets[0].uri);
+        try {
+            let result = await ImagePicker.launchCameraAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                quality: 1,
+            });
+
+            if (!result.canceled) {
+                setImage(result.assets[0].uri);
+            }
+        } catch (error) {
+            Alert.alert("Error", "Failed to open the camera.");
         }
     };
 
     // Open the file picker (Gallery)
     const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaType.Images,
-            allowsEditing: true,
-            quality: 1,
-        });
+        try {
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                quality: 1,
+            });
 
-        if (!result.canceled) {
-            setImage(result.assets[0].uri);
+            if (!result.canceled) {
+                setImage(result.assets[0].uri);
+            }
+        } catch (error) {
+            Alert.alert("Error", "Failed to open gallery.");
         }
     };
 
@@ -80,8 +93,8 @@ const styles = StyleSheet.create({
         paddingVertical: 15, 
         paddingHorizontal: 20, 
         borderRadius: 10, 
-        marginVertical: 10, // Adds spacing between buttons
-        width: '80%', // Makes buttons take most of the width
+        marginVertical: 10,
+        width: '80%',
         justifyContent: 'center'
     },
     buttonText: { fontSize: 18, fontWeight: 'bold', color: 'white', marginLeft: 10 },

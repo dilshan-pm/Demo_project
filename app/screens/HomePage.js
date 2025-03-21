@@ -36,8 +36,8 @@ export default function HomeScreen() {
 
             {/* History Button */}
             <TouchableOpacity style={styles.historyButton} onPress={() => navigation.navigate('History')}>
-                <Ionicons name="time-outline" size={24} color="white" />
-                <Text style={styles.historyText}>View History</Text>
+                <Ionicons name="alert" size={24} color="white" />
+                <Text style={styles.historyText}>Found a Fake?</Text>
             </TouchableOpacity>
         </View>
     );

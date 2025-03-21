@@ -11,7 +11,7 @@ import HomePage from "./app/screens/HomePage";
 import AuthPage from "./app/screens/authPage";
 import SplashScreen from "./app/screens/SplashScreen";
 import ScannerScreen from "./app/screens/ScannerScreen";
-import HistoryScreen from "./app/screens/HistoryScreen";
+import HistoryScreen from "./app/screens/ContactScreen";
 
 const Stack = createStackNavigator();
 
