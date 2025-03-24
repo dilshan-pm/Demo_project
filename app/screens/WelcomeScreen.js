@@ -4,7 +4,7 @@ import { StyleSheet, Text, TextInput, Platform, SafeAreaView, Image, TouchableOp
 
 function WelcomeScreen({ navigation }) {
     const [mobileNumber, setMobileNumber] = useState('');
-  
+
     const handleSignIn = () => {
         if (mobileNumber.length === 10) {
             navigation.replace('OTP', { mobileNumber });
@@ -17,13 +17,13 @@ function WelcomeScreen({ navigation }) {
         }
     };
 
-  
 
-return (
+
+    return (
         <SafeAreaView style={styles.container}>
-            <Image 
-                source={require('../assets/mobile.png')} 
-                style={styles.logo} 
+            <Image
+                source={require('../assets/mobile.png')}
+                style={styles.logo}
             />
             <Text style={styles.heading}>
                 Verify your Mobile Number
@@ -39,7 +39,7 @@ return (
                 value={mobileNumber}
                 onChangeText={setMobileNumber}
             />
-            <TouchableOpacity 
+            <TouchableOpacity
                 style={styles.Button}
                 onPress={handleSignIn}>
                 <Text style={styles.signInText}>Sign in</Text>
@@ -49,47 +49,48 @@ return (
 
 }
 const styles = StyleSheet.create({
-  logo: {
-      width: 50,
-      height: 55,
-      bottom: 20,
-  },
-  container: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-  },
-  heading: {
-      fontSize: 25,
-      fontWeight: 'bold',
-      marginBottom: 5,
+
+    logo: {
+        width: 50,
+        height: 55,
+        bottom: 20,
+    },
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    heading: {
+        fontSize: 25,
+        fontWeight: 'bold',
+        marginBottom: 5,
     },
     subheading: {
-      fontSize: 14,
-      color: '#555',
-      marginBottom: 20,
+        fontSize: 14,
+        color: '#555',
+        marginBottom: 20,
     },
-  input: {
-      width: '89%',
-      height: 50,
-      borderWidth: 1,
-      borderColor: '#ddd',
-      borderRadius: 5,
-      paddingHorizontal: 10,
-      bottom: 10,
+    input: {
+        width: '89%',
+        height: 50,
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        bottom: 10,
     },
-  Button: {
-      width: '89%',
-      height: 45,
-      borderRadius: 7,
-      backgroundColor: '#333',
-      justifyContent: 'center',
-      alignItems: 'center',
-      top: 2,
+    Button: {
+        width: '89%',
+        height: 45,
+        borderRadius: 7,
+        backgroundColor: '#333',
+        justifyContent: 'center',
+        alignItems: 'center',
+        top: 2,
     },
     signInText: {
-      color: '#fff',
-      fontWeight: 'bold',
+        color: '#fff',
+        fontWeight: 'bold',
     },
 });
 
