@@ -1,92 +1,119 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Button, Modal, StyleSheet, TouchableOpacity, Pressable, Alert } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { Icon } from 'react-native-elements';
-import { Camera } from 'expo-camera';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  Image,
+  Platform,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { Icon } from "react-native-elements";
+import { Camera } from "expo-camera";
+import { useNavigation } from "@react-navigation/native";
 
 const App = () => {
-  const [modalVisible, setModalVisible] = useState(false);
-  const navigation = useNavigation();
   const [hasPermission, setHasPermission] = useState(null);
+  const navigation = useNavigation();
+  const [dropdownVisible, setDropdownVisible] = useState(false);
 
-  useEffect(() => {
-      (async () => {
-          const { status } = await Camera.requestCameraPermissionsAsync();
-          setHasPermission(status === 'granted');
-      })();
-  }, []);
+  const toggleDropdown = () => {
+    setDropdownVisible(!dropdownVisible);
+  };
 
-  const openScanner = () => {
-    if (Platform.OS === 'web') {
+  const signOut = () => {
+    navigation.replace("Login");
+  };
+
+  const openScanner = () => {    
+    if (Platform.OS === "web") {
+      window.alert("Camera scanning is not supported on web. Please upload an image instead.");
+      
+      console.log("Attempting navigation to Scanner");
+      try {
+        navigation.navigate("Scanner");
+      } catch (error) {
+        console.error("Navigation error:", error);
+      }
+      return;
+    }
+    if (hasPermission === false) {
       Alert.alert(
-        "Not supported",
-        "Camera scanning is not supported on web. Only upload works.",
-        [
-          {
-            text: "OK",
-            onPress: () => navigation.navigate('Scanner'), 
-          }
-        ]
+        "Camera Permission Denied",
+        "Please allow camera access in settings."
       );
       return;
     }
   
-    if (hasPermission === false) {
-      Alert.alert("Camera Permission Denied", "Please allow camera access in settings.");
-      return;
-    }
-  
-    navigation.navigate('Scanner');
+    navigation.navigate("Scanner");
   };
-  const openModal = () => setModalVisible(true);
-  const closeModal = () => setModalVisible(false);
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      setHasPermission(status === "granted");
+    })();
+  }, []);
 
   return (
     <View style={styles.container}>
       {/* HEADER */}
       <View style={styles.header}>
         <View style={styles.headerContent}>
-          <View style={styles.dotContainer}>
-          </View>
+          <View style={styles.dotContainer}></View>
           <Text style={styles.headerTitle}>CashScan</Text>
         </View>
-        <TouchableOpacity onPress={openModal}>
-          <Icon name="user" type="font-awesome" size={24} color="gray" />
-        </TouchableOpacity>
+        <View style={{ position: "relative" }}>
+          <TouchableOpacity onPress={toggleDropdown}>
+            <Icon name="user" type="font-awesome" size={24} color="gray" />
+          </TouchableOpacity>
+          {dropdownVisible && (
+            <View style={styles.dropdown}>
+              <Image
+                source={require("../assets/profile.png")}
+                style={styles.avatar}
+              />
+              <Text style={styles.welcome}>Welcome User</Text>
+              <TouchableOpacity style={styles.signOutButton} onPress={signOut}>
+                <Text style={styles.signOutText}>Sign Out</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
       </View>
 
       {/* MAIN CONTENT */}
       <View style={styles.main}>
-        <Text style={styles.title}>Think, plan, and track</Text>
-        <Text style={styles.subtitle}>all in one place</Text>
-        <Text style={styles.description}>Efficiently manage your tasks and boost productivity.</Text>
+        <Image
+          source={require("../assets/detect.png")}
+          style={{ width: 300, height: 300, marginBottom: 20, borderRadius: 5 }}
+        />
+        <Text style={styles.title}>Fake Currency Detection</Text>
+        <Text style={styles.subtitle}>
+          Instantly verify banknotes using your mobile camera
+        </Text>
+        <Text style={styles.description}>
+          Our app scans for watermarks, security threads, and hidden patterns to
+          detect counterfeit bills in seconds. Works with multiple currencies to
+          protect your business and give you peace of mind.
+        </Text>
 
-        <TouchableOpacity style={styles.scanButton} onPress={openScanner}>
-          <Ionicons name="camera-outline" size={24} color="white" />
-          <Text style={styles.buttonText}>Scan a Note</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonRow}>
+          <TouchableOpacity style={styles.scanButton} onPress={openScanner}>
+            <Ionicons name="camera-outline" size={24} color="black" />
+            <Text style={styles.buttonText}>Scan</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.foundButton} onPress={() => navigation.navigate('Found')}>
-          <Ionicons name="alert-circle-outline" size={24} color="white" />
-          <Text style={styles.buttonText}>Found a Fake?</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* MODAL */}
-      <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={closeModal}>
-        <View style={styles.modalBackdrop}>
-          <View style={styles.modalContent}>
-            <Pressable onPress={closeModal} style={styles.closeButton}>
-              <Icon name="times" type="font-awesome" size={24} color="gray" />
-            </Pressable>
-            <Text style={styles.modalTitle}>User Menu</Text>
-            <Text style={styles.modalDescription}>This is a placeholder modal for user actions like sign in or profile.</Text>
-            <Button title="Sign In" onPress={() => {}} color="#3B82F6" />
-            <Button title="Get Demo" onPress={() => {}} color="#10B981" />
-          </View>
+          <TouchableOpacity
+            style={styles.foundButton}
+            onPress={() => navigation.navigate("Found")}
+          >
+            <Ionicons name="alert-circle-outline" size={24} color="black" />
+            <Text style={styles.buttonText}>Report</Text>
+          </TouchableOpacity>
         </View>
-      </Modal>
+      </View>
     </View>
   );
 };
@@ -94,113 +121,141 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#eaf4ff',
+    backgroundColor: "#d4e5fa",
     paddingTop: 40,
   },
   header: {
-    backgroundColor: '#fbfbfb',
+    backgroundColor: "#fbfbfb",
     borderRadius: 10,
     padding: 20,
     marginHorizontal: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     elevation: 3,
+    zIndex: 10,
   },
   headerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   dotContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginRight: 8,
   },
   headerTitle: {
-    fontWeight: '500',
+    fontWeight: "500",
     fontSize: 22,
-    fontStyle: 'italic',
+    fontFamily: "sans-serif",
+    fontStyle: "italic",
   },
   main: {
-    backgroundColor: '#fbfbfb',
+    backgroundColor: "#fbfbfb",
     borderRadius: 20,
     padding: 24,
     marginTop: 20,
     marginHorizontal: 16,
-    alignItems: 'center',
+    alignItems: "center",
     elevation: 2,
+    height: "88%",
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#111827',
-    textAlign: 'center',
+    fontWeight: "bold",
+    color: "#111827",
+    textAlign: "center",
   },
   subtitle: {
     fontSize: 24,
-    fontWeight: '400',
-    color: '#9CA3AF',
-    textAlign: 'center',
+    fontWeight: "400",
+    color: "#9CA3AF",
+    textAlign: "center",
     marginTop: 4,
   },
   description: {
     fontSize: 14,
-    color: '#4B5563',
+    color: "#4B5563",
     marginTop: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 5,
+    marginTop: 20,
+  },
+
   scanButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#111827',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 10,
-    marginTop: 24,
+    width: "48%",
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#95c7fc",
+    paddingVertical: 5,
+    paddingHorizontal: 45,
+    borderRadius: 8,
   },
+
   foundButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#EF4444',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 10,
-    marginTop: 16,
+    width: "48%",
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    paddingVertical: 5,
+    paddingHorizontal: 45,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: "#ddd",
   },
   buttonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: 'white',
-    marginLeft: 10,
-  },
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 24,
-    width: '80%',
-    alignItems: 'center',
-    elevation: 5,
-  },
-  closeButton: {
-    position: 'absolute',
-    top: 16,
-    right: 16,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 12,
-  },
-  modalDescription: {
     fontSize: 14,
-    color: '#4B5563',
-    marginBottom: 16,
-    textAlign: 'center',
+    fontWeight: "600",
+    color: "#444",
+    margin: 7,
+  },
+  dropdown: {
+    position: "absolute",
+    top: 36,
+    right: 0,
+    width: 200,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 5,
+    zIndex: 999,
+  },
+  avatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignSelf: "center",
+    marginBottom: 10,
+  },
+  welcome: {
+    fontWeight: "600",
+    fontSize: 16,
+    textAlign: "center",
+  },
+  mobile: {
+    fontSize: 12,
+    color: "#6B7280",
+    textAlign: "center",
+    marginBottom: 10,
+    marginTop: 4,
+  },
+  signOutButton: {
+    backgroundColor: "#EF4444",
+    paddingVertical: 8,
+    borderRadius: 8,
+    marginTop: 8,
+  },
+  signOutText: {
+    color: "#fff",
+    fontWeight: "600",
+    textAlign: "center",
   },
 });
 
