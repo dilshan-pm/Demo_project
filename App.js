@@ -1,9 +1,5 @@
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-} from "react-native";
-import WelcomeScreen from "./app/screens/WelcomeScreen";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import LoginScreen from "./app/screens/LoginScreen";
 import OtpPage from "./app/screens/OtpPage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -11,7 +7,7 @@ import HomePage from "./app/screens/HomePage";
 import AuthPage from "./app/screens/authPage";
 import SplashScreen from "./app/screens/SplashScreen";
 import ScannerScreen from "./app/screens/ScannerScreen";
-import HistoryScreen from "./app/screens/ContactScreen";
+import FoundScreen from "./app/screens/ContactScreen";
 
 const Stack = createStackNavigator();
 
@@ -25,8 +21,7 @@ const linking = {
       auth: "Authentication",
       Home: "home",
       Scanner: "Scanner",
-      History: "History",
-
+      Found: "Found",
     },
   },
 };
@@ -35,48 +30,41 @@ const App = () => {
   return (
     <NavigationContainer linking={linking}>
       <Stack.Navigator>
-        <Stack.Screen name="Splash" component={SplashScreen} />
-        <Stack.Screen name="Login" component={WelcomeScreen} />
-        <Stack.Screen name="OTP" component={OtpPage} />
-        <Stack.Screen name="auth" component={AuthPage} />
+        <Stack.Screen
+          name="Splash"
+          component={SplashScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="OTP"
+          component={OtpPage}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="auth"
+          component={AuthPage}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="Home"
           component={HomePage}
-          options={({ navigation }) => ({
-            headerRight: () => (
-              <TouchableOpacity
-                style={styles.signOutButton}
-                onPress={() => navigation.replace("Login")}
-              >
-                <Text style={styles.signOutText}>Sign Out</Text>
-              </TouchableOpacity>
-            ),
-          })}
+          options={{ headerShown: false }}
         />
-         <Stack.Screen name="Scanner" 
-         component={ScannerScreen} 
-         options={({ navigation }) => ({
-          headerRight: () => (
-            <TouchableOpacity
-              style={styles.signOutButton}
-              onPress={() => navigation.replace("Login")}
-            >
-              <Text style={styles.signOutText}>Sign Out</Text>
-            </TouchableOpacity>
-          ),
-        })}/>
-        <Stack.Screen name="History" 
-         component={HistoryScreen} 
-         options={({ navigation }) => ({
-          headerRight: () => (
-            <TouchableOpacity
-              style={styles.signOutButton}
-              onPress={() => navigation.replace("Login")}
-            >
-              <Text style={styles.signOutText}>Sign Out</Text>
-            </TouchableOpacity>
-          ),
-        })}/>
+        <Stack.Screen
+          name="Scanner"
+          component={ScannerScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Found"
+          component={FoundScreen}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
